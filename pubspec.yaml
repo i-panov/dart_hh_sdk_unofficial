@@ -4,7 +4,7 @@ version: 1.0.0
 repository: https://github.com/i-panov/dart_hh_sdk_unofficial
 
 environment:
-  sdk: ^3.9.0-100.2.beta
+  sdk: ^3.5.0
 
 dependencies:
   dio: ^5.8.0+1
