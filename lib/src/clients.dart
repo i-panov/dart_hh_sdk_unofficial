@@ -12,16 +12,16 @@ sealed class HhClient {
   final Dio _dio;
 
   HhClient()
-    : _dio = Dio(
-        BaseOptions(
-          baseUrl: baseUrl,
-          contentType: 'application/json',
-          headers: {'User-Agent': 'hh_sdk_unofficial/dart'},
-          connectTimeout: const Duration(seconds: 3),
-          receiveTimeout: const Duration(seconds: 10),
-          sendTimeout: const Duration(seconds: 10),
-        ),
-      );
+      : _dio = Dio(
+          BaseOptions(
+            baseUrl: baseUrl,
+            contentType: 'application/json',
+            headers: {'User-Agent': 'hh_sdk_unofficial/dart'},
+            connectTimeout: const Duration(seconds: 3),
+            receiveTimeout: const Duration(seconds: 10),
+            sendTimeout: const Duration(seconds: 10),
+          ),
+        );
 }
 
 class HhPublicClient extends HhClient {
@@ -53,49 +53,19 @@ class HhPublicClient extends HhClient {
     return city.lines;
   }
 
-  Future<VacanciesSearchResult> searchVacancies({
-    int page = 0,
-    int perPage = 10,
-    String query = '',
-    bool queryMagic = true,
-    Set<String> searchFields = const {},
-    Set<String> experiences = const {},
-    Set<String> areas = const {},
-    Set<String> metros = const {},
-    Set<String> professionalRoles = const {},
-    Set<String> industries = const {},
-    Set<String> employerIds = const {},
-    Set<String> vacancyLabels = const {},
-    Salary? salary,
-    GeoRect? geoRect,
-    SearchPeriod? searchPeriod,
-    bool premiumSort = false,
-  }) async {
+  Future<VacanciesSearchResult> searchVacancies(SearchVacanciesRequest request) async {
     final params = {
-      if (page >= 0)
-        'page': page,
-
-      if (perPage > 0)
-        'per_page': perPage,
-
-      'text': query,
-      'no_magic': !queryMagic,
-
-      if (areas.isNotEmpty)
-        "area": areas.toList(),
-
-      if (salary != null)
-        ...salary.toJson(),
-
-      if (geoRect != null)
-        ...geoRect.toJson(),
-
-      if (searchPeriod != null)
-        ...searchPeriod.toJson(),
-
-      'premium': premiumSort,
+      if (request.page >= 0) 'page': request.page,
+      if (request.perPage > 0) 'per_page': request.perPage,
+      'text': request.query,
+      'no_magic': !request.queryMagic,
+      if (request.areas.isNotEmpty) "area": request.areas.toList(),
+      if (request.salary != null) ...request.salary!.toJson(),
+      if (request.geoRect != null) ...request.geoRect!.toJson(),
+      if (request.searchPeriod != null) ...request.searchPeriod!.toJson(),
+      'premium': request.premiumSort,
     };
-    
+
     final response = await _dio.get<Map<String, dynamic>>('/vacancies',
       queryParameters: params,
     );
